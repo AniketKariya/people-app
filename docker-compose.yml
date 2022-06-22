@@ -1,7 +1,7 @@
 version: "3.3"
 services:
   people-app:
-    image: "people-app:1.1"
+    image: "aniketkariya/people-app:1.0"
     ports:
       - "3000:3000"
     depends_on:
