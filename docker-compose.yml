@@ -1,0 +1,33 @@
+version: "3.3"
+services:
+  people-app:
+    image: "people-app:1.1"
+    ports:
+      - "3000:3000"
+    depends_on:
+      - mongo
+    environment:
+      MONGOURL: mongodb://admin:password@mongo:27017/
+
+  mongo:
+    image: "mongo"
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: "admin"
+      MONGO_INITDB_ROOT_PASSWORD: "password"
+    volumes:
+      - "db-data:/data/db"
+
+  mongo-express:
+    image: "mongo-express:latest"
+    ports:
+      - "8081:8081"
+    depends_on:
+      - mongo
+    environment:
+      ME_CONFIG_MONGODB_URL: "mongodb://admin:password@mongo:27017/"
+
+volumes:
+  db-data:
+    driver: local

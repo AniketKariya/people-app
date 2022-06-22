@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>People 🤼</title>
+
+    <style>
+        *,
+        html {
+            margin: 0;
+            padding: 0;
+        }
+
+        main {
+            max-width: 768px;
+            margin: 0 auto;
+            height: 100vh;
+            padding: 1em;
+            box-sizing: border-box;
+
+        }
+
+        table {
+            width: 100%;
+            margin: 3em auto;
+            border-collapse: collapse;
+            box-shadow: 2px 1px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        th {
+            padding-top: 12px;
+            padding-bottom: 12px;
+            text-align: left;
+            background-color: #04AA6D;
+            color: white;
+        }
+
+        td,
+        th {
+            border: 1px solid #ddd;
+            padding: 8px;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+
+        tr:hover {
+            background-color: #ddd;
+        }
+
+        td:first-child {
+            width: 10%;
+            text-align: center;
+        }
+
+        td:nth-child(2) {
+            width: 30%;
+        }
+
+        td:last-child {
+            width: 15%;
+        }
+
+        .delete {
+            padding: 2px 8px;
+            border: 1px solid rgba(0, 0, 0, 0.2);
+            color: darkred;
+            font-weight: 900;
+        }
+
+        input {
+            padding: 8px 4px;
+            margin: 0 2em 0.2em;
+            border: 1px solid rgba(0, 0, 0, 0.2);
+        }
+
+        input[type="text"],
+        input[type="email"] {
+            width: 70%;
+        }
+
+        button {
+            padding: 4px 12px;
+        }
+
+        #form tr td:first-child {
+            width: 5%;
+        }
+    </style>
+</head>
+
+<body>
+    <main>
+        <table id="data">
+            <thead>
+                <tr>
+                    <th></th>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Age</th>
+                </tr>
+            </thead>
+            <tbody>
+
+            </tbody>
+        </table>
+
+        <table id="form">
+            <tr>
+                <td>
+                    Name:
+                </td>
+                <td>
+                    <input type="text" name="name" id="name">
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    Email:
+                </td>
+                <td>
+                    <input type="email" name="email" id="email">
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    Age:
+                </td>
+                <td>
+                    <input type="number" name="age" id="age">
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2"><button onclick="addPerson(event)">Add</button></td>
+            </tr>
+        </table>
+    </main>
+
+    <script>
+
+        const populateTable = (arrayData) => {
+            document.querySelector("#data tbody").remove()
+
+            var t = "";
+            for (var i = 0; i < arrayData.length; i++) {
+                var tr = "<tr>";
+                tr += `<td> <button class="delete" value="${arrayData[i]._id}" onclick="deletePerson(event)">X</button> </td>`;
+                tr += "<td>" + arrayData[i].name + "</td>";
+                tr += "<td>" + arrayData[i].email + "</td>";
+                tr += "<td>" + arrayData[i].age + "</td>";
+                tr += "</tr>";
+                t += tr;
+            }
+            document.getElementById("data").innerHTML += t;
+        }
+
+        const fetchPeople = (e) => {
+            fetch("http://localhost:3000/people")
+                .then(res => res.json())
+                .then(data => populateTable(data))
+        }
+
+        window.onload = fetchPeople
+
+        const deletePerson = async (e) => {
+            const id = e.target.value
+
+            await fetch(`http://localhost:3000/person/${id}`, {
+                method: "DELETE"
+            }).then(res => res.json())
+            .then(data => console.log(data))
+
+            fetchPeople()
+        }
+
+        const addPerson = async (e) => {
+            const name = document.getElementById("name").value
+            const email = document.getElementById("email").value
+            const age = document.getElementById("age").value
+            
+            const payload = JSON.stringify({name, email, age})
+            console.log(payload)
+
+            await fetch("http://localhost:3000/person/add", {
+                method: 'POST',
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: payload
+            })
+
+            fetchPeople()
+        }
+    </script>
+</body>
+
+</html>
