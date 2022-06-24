@@ -159,7 +159,7 @@
         }
 
         const fetchPeople = (e) => {
-            fetch("http://localhost:3000/people")
+            fetch("/people")
                 .then(res => res.json())
                 .then(data => populateTable(data))
         }
@@ -169,7 +169,7 @@
         const deletePerson = async (e) => {
             const id = e.target.value
 
-            await fetch(`http://localhost:3000/person/${id}`, {
+            await fetch(`/person/${id}`, {
                 method: "DELETE"
             }).then(res => res.json())
             .then(data => console.log(data))
@@ -185,7 +185,7 @@
             const payload = JSON.stringify({name, email, age})
             console.log(payload)
 
-            await fetch("http://localhost:3000/person/add", {
+            await fetch("/person/add", {
                 method: 'POST',
                 headers: {
                     "Content-Type": "application/json"
